@@ -11,23 +11,29 @@ import{
   UilSun,
   UilSunset,
   } from "@iconscout/react-unicons";
+import axios from 'axios';
 const key="a29cc047c636224657daadca054084ee";
  let formattedData;
 function Inputs() {
  
-  const [data,setData]=useState();
+  const [data,setData]=useState(null);
   const [search,setSearch]=useState("");
-  const [cityName,setCityName]=useState();
+  const [cityName,setCityName]=useState("delhi");
   const getWeatherData=async(city)=>{
+    console.log("Setting data")
     const url="https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+key;
-   await fetch(url)
-    .then((response) => response.json())
-    .then(data=>setData(data))
+    try{
+    const res= await axios.get(url)
+    console.log(res.data)
+    setData(res.data);
+    }catch(err){
+      console.log(err)
+    }
   }
 
  useEffect(()=>{
   console.log("enter")
-  getWeatherData("delhi");
+  getWeatherData(cityName);
  },[cityName]);
 
 const handleChange=(e)=>{
@@ -74,25 +80,25 @@ const day=date.toLocaleString('en-us', {  weekday: 'long' });
    </div>
    <div>
     <div className='flex flex-row justify-center items-center my-8 '>
-      <p className='text-white text-3xl'>{data?.name},{data.sys?.country} </p>
+      <p className='text-white text-3xl'>{data?.name},{data?.sys?.country} </p>
     </div>
     <div className='flex flex-row items-center justify-between my-10'>
-     <p className='text-white text-3xl font-semibold'>{data.weather[0].main}</p>
-     <p className='text-white text-3xl font-semibold'>{Math.floor(data.main.temp-273)}&deg;</p>
+     <p className='text-white text-3xl font-semibold'>{data?.weather[0]?.main}</p>
+     <p className='text-white text-3xl font-semibold'>{Math.floor(data?.main?.temp-273)}&deg;</p>
    </div>
 
    <div className='flex flex-col justify-center items-center my-8'>
      <div className='flex flex-row text-xl font-semibold text-white my-2'>
       <UilTemperature size={40} className="mr-3" />
-      Real fell <span className='ml-3'>{Math.floor(data.main.feels_like-273)}&deg;</span>   
+      Real fell <span className='ml-3'>{Math.floor(data?.main?.feels_like-273)}&deg;</span>   
        </div>
        <div className='flex flex-row text-xl font-semibold text-white my-2'>
       <UilWind size={40} className="mr-3" />
-      Wind<span className='ml-3'> {data.wind.speed} km/h</span>   
+      Wind<span className='ml-3'> {data?.wind?.speed} km/h</span>   
        </div>     
          <div className='flex flex-row text-xl font-semibold text-white my-2'>
       <UilTear size={40} className="mr-3" />
-      Humidity <span className='ml-3'>{data.main.humidity} %</span>   
+      Humidity <span className='ml-3'>{data?.main?.humidity} %</span>   
        </div>
      </div>
 
@@ -104,10 +110,10 @@ const day=date.toLocaleString('en-us', {  weekday: 'long' });
     <p className='font-light'>Set <span>{set}</span></p>
     <p className='font-light ml-2'>|</p> */}
     <UilArrowUp/>
-    <p  className='font-light'>High <span>{Math.floor(data.main.temp_max-273)}&deg;</span></p>
+    <p  className='font-light'>High <span>{Math.floor(data?.main?.temp_max-273)}&deg;</span></p>
     <p className='font-light ml-2'>|</p>
     <UilArrowDown/>
-    <p className='font-light'>Low <span>{Math.floor(data.main.temp_min-273)}&deg;</span></p>
+    <p className='font-light'>Low <span>{Math.floor(data?.main?.temp_min-273)}&deg;</span></p>
     </div>
 
     </div>
